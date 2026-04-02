@@ -63,15 +63,14 @@ export default function PlayPage() {
     setActiveQuestion({ categoryId, questionId });
   };
 
-  const handleAnswer = (teamId: string, correct: boolean, wager?: number) => {
+  const handleAnswer = (teamId: string, correct: boolean) => {
     if (!activeQuestion) return;
     const q = currentRound.categories
       .find(c => c.id === activeQuestion.categoryId)
       ?.questions.find(q => q.id === activeQuestion.questionId);
     if (!q) return;
 
-    const points = wager ?? q.pointValue;
-    updateScore(gameId, teamId, correct ? points : -points);
+    updateScore(gameId, teamId, correct ? q.pointValue : -q.pointValue);
     revealQuestion(gameId, currentRound.id, activeQuestion.categoryId, activeQuestion.questionId, teamId, correct);
     setActiveQuestion(null);
   };

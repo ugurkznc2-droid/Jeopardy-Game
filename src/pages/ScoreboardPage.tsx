@@ -37,39 +37,39 @@ export default function ScoreboardPage() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const podiumHeights = [240, 300, 200]; // 2nd, 1st, 3rd
+  const podiumHeights = [220, 280, 180]; // 2nd, 1st, 3rd
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-jeopardy-dark via-[#000a3a] to-jeopardy-dark flex flex-col overflow-y-auto">
+    <div className="h-screen bg-gradient-to-b from-jeopardy-dark via-[#000a3a] to-jeopardy-dark flex flex-col overflow-hidden">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-8 py-5 shrink-0">
+      <div className="flex items-center justify-between px-10 py-5 shrink-0">
         <button
           onClick={() => navigate(game.status === 'active' ? `/play/${gameId}` : '/')}
           className="text-white/40 hover:text-white cursor-pointer text-xl"
         >
           &larr; {game.status === 'active' ? 'Back to Game' : 'Home'}
         </button>
-        <h1 className="text-xl font-bold text-jeopardy-gold">{game.title}</h1>
+        <h1 className="text-2xl font-bold text-jeopardy-gold">{game.title}</h1>
         <button
           onClick={toggleFullscreen}
-          className="p-2 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer"
+          className="p-2.5 bg-white/10 hover:bg-white/20 rounded-lg cursor-pointer"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
           </svg>
         </button>
       </div>
 
       {/* Title */}
-      <div className="text-center py-8 shrink-0">
+      <div className="text-center py-6 shrink-0">
         {isComplete && (
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', duration: 0.8 }}
           >
-            <p className="text-white/40 text-lg uppercase tracking-widest mb-2">Champion</p>
-            <h2 className="text-5xl md:text-7xl font-black animate-pulse-glow inline-block px-8 py-2 rounded-xl" style={{ color: winner?.color, textShadow: `0 0 30px ${winner?.color}40` }}>
+            <p className="text-white/40 text-lg uppercase tracking-widest mb-3">Champion</p>
+            <h2 className="text-5xl md:text-7xl font-black animate-pulse-glow inline-block px-10 py-3 rounded-2xl" style={{ color: winner?.color, textShadow: `0 0 30px ${winner?.color}40` }}>
               {winner?.name}
             </h2>
           </motion.div>
@@ -81,12 +81,10 @@ export default function ScoreboardPage() {
 
       {/* Podium for top 3 */}
       {sorted.length >= 2 && (
-        <div className="flex items-end justify-center gap-4 px-8 mb-8 shrink-0" style={{ minHeight: '350px' }}>
+        <div className="flex items-end justify-center gap-6 px-10 mb-6 shrink-0" style={{ minHeight: '320px' }}>
           {[sorted[1], sorted[0], sorted[2]].filter(Boolean).map((team, i) => {
             const place = [2, 1, 3][i];
             const height = podiumHeights[i];
-            const medals = ['', '🥇', '🥈', '🥉'];
-
             return (
               <motion.div
                 key={team.id}
@@ -97,19 +95,24 @@ export default function ScoreboardPage() {
               >
                 <AnimatedScore score={team.score} color={team.color} />
                 <div
-                  className="font-bold text-lg mt-2 mb-3 px-4 py-1.5 rounded-lg"
-                  style={{ backgroundColor: team.color }}
+                  className="font-bold text-lg mt-3 mb-4 px-6 py-2.5 rounded-2xl border-2 shadow-lg"
+                  style={{
+                    backgroundColor: `${team.color}20`,
+                    borderColor: team.color,
+                    color: 'white',
+                    boxShadow: `0 4px 20px ${team.color}30`,
+                  }}
                 >
                   {team.name}
                 </div>
                 <motion.div
-                  className="w-32 md:w-40 rounded-t-xl flex items-center justify-center"
-                  style={{ backgroundColor: `${team.color}40`, borderTop: `3px solid ${team.color}` }}
+                  className="w-36 md:w-44 rounded-t-2xl flex flex-col items-center justify-center gap-1"
+                  style={{ backgroundColor: `${team.color}30`, borderTop: `4px solid ${team.color}` }}
                   initial={{ height: 0 }}
                   animate={{ height }}
                   transition={{ delay: 0.5 + i * 0.15, type: 'spring', stiffness: 50 }}
                 >
-                  <span className="text-4xl">{medals[place]}</span>
+                  <span className="text-5xl font-black text-white/80">#{place}</span>
                 </motion.div>
               </motion.div>
             );
@@ -117,45 +120,51 @@ export default function ScoreboardPage() {
         </div>
       )}
 
-      {/* Full standings */}
-      <div className="max-w-2xl mx-auto w-full px-8 pb-10">
-        <h3 className="text-white/40 text-sm uppercase tracking-widest mb-4 text-center">Full Standings</h3>
-        <div className="space-y-2">
-          {sorted.map((team, i) => (
-            <motion.div
-              key={team.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8 + i * 0.1 }}
-              className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl px-5 py-3"
-            >
-              <span className="text-2xl font-black text-white/30 w-8">#{i + 1}</span>
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: team.color }} />
-              <span className="font-bold flex-1 text-lg">{team.name}</span>
-              <span className="text-2xl font-black tabular-nums" style={{ color: team.color }}>
-                ${team.score.toLocaleString()}
-              </span>
-            </motion.div>
-          ))}
+      {/* Full standings — centered in remaining space */}
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0 px-10 pb-6">
+        <div className="max-w-2xl w-full">
+          <h3 className="text-white/40 text-sm uppercase tracking-widest mb-5 text-center">Full Standings</h3>
+          <div className="space-y-3">
+            {sorted.map((team, i) => (
+              <motion.div
+                key={team.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 + i * 0.1 }}
+                className="flex items-center gap-5 rounded-2xl px-6 py-4 border-2"
+                style={{
+                  backgroundColor: `${team.color}10`,
+                  borderColor: `${team.color}40`,
+                }}
+              >
+                <span className="text-2xl font-black w-10" style={{ color: `${team.color}80` }}>#{i + 1}</span>
+                <div className="w-5 h-5 rounded-full ring-2 ring-white/20" style={{ backgroundColor: team.color }} />
+                <span className="font-bold flex-1 text-lg">{team.name}</span>
+                <span className="text-2xl font-black tabular-nums" style={{ color: team.color }}>
+                  ${team.score.toLocaleString()}
+                </span>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Bottom actions */}
-      <div className="flex justify-center gap-4 pb-8 shrink-0">
-        {game.status === 'active' && (
+        {/* Bottom actions */}
+        <div className="flex justify-center gap-4 mt-8 shrink-0">
+          {game.status === 'active' && (
+            <button
+              onClick={() => navigate(`/play/${gameId}`)}
+              className="px-6 py-3 bg-green-600 hover:bg-green-500 rounded-xl font-bold cursor-pointer"
+            >
+              Back to Game
+            </button>
+          )}
           <button
-            onClick={() => navigate(`/play/${gameId}`)}
-            className="px-6 py-3 bg-green-600 hover:bg-green-500 rounded-xl font-bold cursor-pointer"
+            onClick={() => navigate('/')}
+            className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl cursor-pointer"
           >
-            Back to Game
+            Home
           </button>
-        )}
-        <button
-          onClick={() => navigate('/')}
-          className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl cursor-pointer"
-        >
-          Home
-        </button>
+        </div>
       </div>
     </div>
   );

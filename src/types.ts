@@ -6,7 +6,7 @@ export interface Question {
   correctChoice: number;   // index 0-3 of the correct choice
   answer: string;          // text of the correct answer (auto-set from choices[correctChoice])
   imageUrl?: string;
-  isDailyDouble: boolean;
+  isDailyDouble?: boolean; // deprecated, kept for backward compat
   isRevealed: boolean;
   answeredBy?: string;
   answeredCorrectly?: boolean;

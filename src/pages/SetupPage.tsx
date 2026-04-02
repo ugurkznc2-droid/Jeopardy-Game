@@ -550,17 +550,6 @@ function CategoryEditor({
                   ))}
                 </div>
               </div>
-              <div className="flex items-center mt-2">
-                <label className="flex items-center gap-2 cursor-pointer text-xs">
-                  <input
-                    type="checkbox"
-                    checked={q.isDailyDouble}
-                    onChange={e => updateQuestion(gameId, roundId, category.id, q.id, { isDailyDouble: e.target.checked })}
-                    className="rounded cursor-pointer"
-                  />
-                  <span className="text-yellow-400">Daily Double</span>
-                </label>
-              </div>
               {q.imageUrl !== undefined && (
                 <div className="mt-2">
                   <label className="text-white/40 text-xs block mb-1">Image URL (optional)</label>
