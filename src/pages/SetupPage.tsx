@@ -69,6 +69,8 @@ export default function SetupPage() {
         id: generateId(),
         pointValue: pv,
         questionText: '',
+        choices: ['', '', '', ''],
+        correctChoice: 0,
         answer: '',
         isDailyDouble: false,
         isRevealed: false,
@@ -101,6 +103,8 @@ export default function SetupPage() {
           id: generateId(),
           pointValue: 0,
           questionText: '',
+          choices: ['', '', '', ''],
+          correctChoice: 0,
           answer: '',
           isDailyDouble: false,
           isRevealed: false,
@@ -330,13 +334,44 @@ export default function SetupPage() {
                           />
                         </div>
                         <div>
-                          <label className="text-white/50 text-sm block mb-1">Answer</label>
-                          <input
-                            type="text"
-                            value={currentRound.categories[0].questions[0].answer}
-                            onChange={e => updateQuestion(gameId, currentRound.id, currentRound.categories[0].id, currentRound.categories[0].questions[0].id, { answer: e.target.value })}
-                            className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:border-purple-400"
-                          />
+                          <label className="text-white/50 text-sm block mb-1">Choices (click radio to mark correct)</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {['A', 'B', 'C', 'D'].map((letter, idx) => {
+                              const fq = currentRound.categories[0].questions[0];
+                              return (
+                                <div key={letter} className="flex items-center gap-2">
+                                  <input
+                                    type="radio"
+                                    name="fj-correct"
+                                    checked={(fq.correctChoice ?? 0) === idx}
+                                    onChange={() => updateQuestion(gameId, currentRound.id, currentRound.categories[0].id, fq.id, {
+                                      correctChoice: idx,
+                                      answer: (fq.choices || ['', '', '', ''])[idx],
+                                    })}
+                                    className="cursor-pointer accent-green-500"
+                                  />
+                                  <span className={`text-xs font-bold w-5 ${(fq.correctChoice ?? 0) === idx ? 'text-green-400' : 'text-white/40'}`}>{letter}</span>
+                                  <input
+                                    type="text"
+                                    value={(fq.choices || ['', '', '', ''])[idx] || ''}
+                                    onChange={e => {
+                                      const newChoices = [...(fq.choices || ['', '', '', ''])];
+                                      newChoices[idx] = e.target.value;
+                                      const updates: Record<string, unknown> = { choices: newChoices };
+                                      if ((fq.correctChoice ?? 0) === idx) updates.answer = e.target.value;
+                                      updateQuestion(gameId, currentRound.id, currentRound.categories[0].id, fq.id, updates);
+                                    }}
+                                    className={`flex-1 bg-white/10 border rounded px-2 py-1 text-sm focus:outline-none ${
+                                      (fq.correctChoice ?? 0) === idx
+                                        ? 'border-green-500/50 text-green-300 focus:border-green-400'
+                                        : 'border-white/20 focus:border-purple-400'
+                                    }`}
+                                    placeholder={`Choice ${letter}...`}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
                       </>
                     )}
@@ -446,28 +481,54 @@ function CategoryEditor({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-[100px_1fr] gap-3">
-                <div className="flex items-center">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs">
-                    <input
-                      type="checkbox"
-                      checked={q.isDailyDouble}
-                      onChange={e => updateQuestion(gameId, roundId, category.id, q.id, { isDailyDouble: e.target.checked })}
-                      className="rounded cursor-pointer"
-                    />
-                    <span className="text-yellow-400">DD</span>
-                  </label>
+              {/* Multiple choice options */}
+              <div className="mt-2">
+                <label className="text-white/40 text-xs block mb-1">Choices (click radio to mark correct answer)</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['A', 'B', 'C', 'D'].map((letter, idx) => (
+                    <div key={letter} className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name={`correct-${q.id}`}
+                        checked={(q.correctChoice ?? 0) === idx}
+                        onChange={() => updateQuestion(gameId, roundId, category.id, q.id, {
+                          correctChoice: idx,
+                          answer: (q.choices || ['', '', '', ''])[idx],
+                        })}
+                        className="cursor-pointer accent-green-500"
+                      />
+                      <span className={`text-xs font-bold w-5 ${(q.correctChoice ?? 0) === idx ? 'text-green-400' : 'text-white/40'}`}>{letter}</span>
+                      <input
+                        type="text"
+                        value={(q.choices || ['', '', '', ''])[idx] || ''}
+                        onChange={e => {
+                          const newChoices = [...(q.choices || ['', '', '', ''])];
+                          newChoices[idx] = e.target.value;
+                          const updates: Record<string, unknown> = { choices: newChoices };
+                          if ((q.correctChoice ?? 0) === idx) updates.answer = e.target.value;
+                          updateQuestion(gameId, roundId, category.id, q.id, updates);
+                        }}
+                        className={`flex-1 bg-white/10 border rounded px-2 py-1 text-sm focus:outline-none ${
+                          (q.correctChoice ?? 0) === idx
+                            ? 'border-green-500/50 text-green-300 focus:border-green-400'
+                            : 'border-white/20 focus:border-jeopardy-gold'
+                        }`}
+                        placeholder={`Choice ${letter}...`}
+                      />
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <label className="text-white/40 text-xs block mb-1">Answer</label>
+              </div>
+              <div className="flex items-center mt-2">
+                <label className="flex items-center gap-2 cursor-pointer text-xs">
                   <input
-                    type="text"
-                    value={q.answer}
-                    onChange={e => updateQuestion(gameId, roundId, category.id, q.id, { answer: e.target.value })}
-                    className="w-full bg-white/10 border border-white/20 rounded px-3 py-1 focus:outline-none focus:border-green-400 text-green-300"
-                    placeholder="Enter answer..."
+                    type="checkbox"
+                    checked={q.isDailyDouble}
+                    onChange={e => updateQuestion(gameId, roundId, category.id, q.id, { isDailyDouble: e.target.checked })}
+                    className="rounded cursor-pointer"
                   />
-                </div>
+                  <span className="text-yellow-400">Daily Double</span>
+                </label>
               </div>
               {q.imageUrl !== undefined && (
                 <div className="mt-2">
@@ -488,6 +549,8 @@ function CategoryEditor({
               id: generateId(),
               pointValue: (category.questions.length + 1) * 200,
               questionText: '',
+              choices: ['', '', '', ''],
+              correctChoice: 0,
               answer: '',
               isDailyDouble: false,
               isRevealed: false,

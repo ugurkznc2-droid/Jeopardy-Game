@@ -189,18 +189,51 @@ export default function QuestionModal({
               <button onClick={onClose} className="text-white/40 hover:text-white text-2xl cursor-pointer">&times;</button>
             </div>
 
-            {/* Question display */}
-            <div className="flex-1 flex items-center justify-center p-8 min-h-0">
+            {/* Question display + choices */}
+            <div className="flex-1 flex flex-col items-center justify-center px-8 py-4 min-h-0 overflow-hidden">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="text-center max-w-4xl"
+                className="text-center max-w-4xl w-full"
               >
-                <p className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+                <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-6" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
                   {question.questionText}
                 </p>
                 {question.imageUrl && (
-                  <img src={question.imageUrl} alt="" className="max-h-48 mx-auto mt-6 rounded-lg shadow-xl" />
+                  <img src={question.imageUrl} alt="" className="max-h-32 mx-auto mb-4 rounded-lg shadow-xl" />
+                )}
+                {/* Multiple choice grid */}
+                {question.choices && question.choices.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3 max-w-3xl mx-auto mt-2">
+                    {question.choices.map((choice, idx) => {
+                      const letter = ['A', 'B', 'C', 'D'][idx];
+                      const isCorrect = idx === question.correctChoice;
+                      const revealed = showAnswer;
+                      return (
+                        <div
+                          key={idx}
+                          className={`flex items-center gap-3 px-5 py-3 rounded-xl text-left transition-all ${
+                            revealed && isCorrect
+                              ? 'bg-green-600/40 border-2 border-green-400 scale-[1.02]'
+                              : revealed && !isCorrect
+                              ? 'bg-white/5 border-2 border-white/10 opacity-50'
+                              : 'bg-white/10 border-2 border-white/20'
+                          }`}
+                        >
+                          <span className={`text-xl font-black shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                            revealed && isCorrect ? 'bg-green-500 text-white' : 'bg-white/20 text-white/70'
+                          }`}>
+                            {letter}
+                          </span>
+                          <span className={`text-lg md:text-xl font-medium ${
+                            revealed && isCorrect ? 'text-green-300' : 'text-white'
+                          }`}>
+                            {choice}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </motion.div>
             </div>

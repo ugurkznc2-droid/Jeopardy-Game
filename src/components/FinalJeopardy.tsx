@@ -111,19 +111,33 @@ export default function FinalJeopardy({ round, teams, soundEnabled, onComplete, 
 
       {/* Question display */}
       {phase === 'question' && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-8 bg-jeopardy-blue p-8">
+        <div className="flex-1 flex flex-col items-center justify-center gap-6 bg-jeopardy-blue p-8 overflow-y-auto">
           <p className="text-white/50 uppercase tracking-widest">{category.name}</p>
           <motion.p
-            className="text-3xl md:text-5xl font-bold text-center max-w-4xl leading-tight"
+            className="text-2xl md:text-4xl font-bold text-center max-w-4xl leading-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}
           >
             {question.questionText}
           </motion.p>
+          {/* Multiple choice grid */}
+          {question.choices && question.choices.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 max-w-3xl w-full">
+              {question.choices.map((choice, idx) => {
+                const letter = ['A', 'B', 'C', 'D'][idx];
+                return (
+                  <div key={idx} className="flex items-center gap-3 px-5 py-3 rounded-xl bg-white/10 border-2 border-white/20">
+                    <span className="text-xl font-black w-8 h-8 rounded-full flex items-center justify-center bg-white/20 text-white/70 shrink-0">{letter}</span>
+                    <span className="text-lg md:text-xl font-medium text-white">{choice}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <button
             onClick={() => { setPhase('reveal'); if (soundEnabled) playRevealSound(); }}
-            className="px-8 py-3 bg-green-600 hover:bg-green-500 rounded-xl font-bold text-xl cursor-pointer mt-8"
+            className="px-8 py-3 bg-green-600 hover:bg-green-500 rounded-xl font-bold text-xl cursor-pointer mt-4"
           >
             Reveal Answer &amp; Judge
           </button>
@@ -133,9 +147,11 @@ export default function FinalJeopardy({ round, teams, soundEnabled, onComplete, 
       {/* Reveal & judge */}
       {phase === 'reveal' && (
         <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8 overflow-y-auto">
-          <div className="bg-green-900/30 border border-green-500/30 rounded-xl px-8 py-4 text-center mb-4">
-            <p className="text-green-400 text-sm uppercase tracking-wide mb-1">Answer</p>
-            <p className="text-2xl md:text-3xl font-bold text-green-300">{question.answer}</p>
+          <div className="bg-green-900/30 border border-green-500/30 rounded-xl px-8 py-4 text-center mb-2">
+            <p className="text-green-400 text-sm uppercase tracking-wide mb-1">Correct Answer</p>
+            <p className="text-2xl md:text-3xl font-bold text-green-300">
+              {['A', 'B', 'C', 'D'][question.correctChoice ?? 0]}: {question.answer}
+            </p>
           </div>
 
           <div className="grid gap-3 w-full max-w-lg">

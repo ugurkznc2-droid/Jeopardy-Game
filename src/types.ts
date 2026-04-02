@@ -2,7 +2,9 @@ export interface Question {
   id: string;
   pointValue: number;
   questionText: string;
-  answer: string;
+  choices: string[];       // 4 choices (A, B, C, D)
+  correctChoice: number;   // index 0-3 of the correct choice
+  answer: string;          // text of the correct answer (auto-set from choices[correctChoice])
   imageUrl?: string;
   isDailyDouble: boolean;
   isRevealed: boolean;
