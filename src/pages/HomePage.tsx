@@ -79,9 +79,9 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-jeopardy-dark to-[#000a3a] p-8 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-to-b from-jeopardy-dark to-[#000a3a] p-8 overflow-y-auto flex items-start justify-center">
       <motion.div
-        className="max-w-4xl mx-auto"
+        className="max-w-4xl w-full"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
