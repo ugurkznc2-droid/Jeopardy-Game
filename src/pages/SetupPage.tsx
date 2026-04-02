@@ -5,6 +5,7 @@ import { useGameStore } from '../store/gameStore';
 import { generateId, getDefaultPointValues } from '../utils/helpers';
 import type { Category, Question, Round } from '../types';
 import ConfirmDialog from '../components/ConfirmDialog';
+import CSVImportModal from '../components/CSVImportModal';
 
 export default function SetupPage() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -22,6 +23,7 @@ export default function SetupPage() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [confirmStart, setConfirmStart] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [showCSVImport, setShowCSVImport] = useState(false);
 
   if (!game || !gameId) {
     return (
@@ -301,12 +303,20 @@ export default function SetupPage() {
                       removeQuestion={removeQuestion}
                     />
                   ))}
-                  <button
-                    onClick={handleAddCategory}
-                    className="w-full py-4 bg-white/5 border-2 border-dashed border-white/20 rounded-xl hover:bg-white/10 hover:border-white/40 transition-all cursor-pointer text-white/50 font-medium"
-                  >
-                    + Add Category
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleAddCategory}
+                      className="flex-1 py-4 bg-white/5 border-2 border-dashed border-white/20 rounded-xl hover:bg-white/10 hover:border-white/40 transition-all cursor-pointer text-white/50 font-medium"
+                    >
+                      + Add Category
+                    </button>
+                    <button
+                      onClick={() => setShowCSVImport(true)}
+                      className="px-6 py-4 bg-jeopardy-blue/30 border-2 border-dashed border-jeopardy-blue/50 rounded-xl hover:bg-jeopardy-blue/50 hover:border-jeopardy-blue transition-all cursor-pointer text-blue-300 font-medium"
+                    >
+                      Import CSV
+                    </button>
+                  </div>
                 </>
               )}
 
@@ -399,6 +409,27 @@ export default function SetupPage() {
         confirmLabel="Start Game!"
         onConfirm={() => { startGame(gameId); setConfirmStart(false); navigate(`/play/${gameId}`); }}
         onCancel={() => setConfirmStart(false)}
+      />
+      <CSVImportModal
+        open={showCSVImport}
+        onImport={(categories) => {
+          if (!currentRound) return;
+          categories.forEach(cat => {
+            // Check if category already exists in this round
+            const existing = currentRound.categories.find(
+              c => c.name.toLowerCase() === cat.name.toLowerCase()
+            );
+            if (existing) {
+              // Append questions to existing category
+              cat.questions.forEach(q => {
+                addQuestion(gameId, currentRound.id, existing.id, q);
+              });
+            } else {
+              addCategory(gameId, currentRound.id, cat);
+            }
+          });
+        }}
+        onClose={() => setShowCSVImport(false)}
       />
     </div>
   );
