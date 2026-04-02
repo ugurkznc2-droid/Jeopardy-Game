@@ -42,7 +42,7 @@ export default function ScoreboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-jeopardy-dark via-[#000a3a] to-jeopardy-dark flex flex-col overflow-y-auto">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-4 shrink-0">
+      <div className="flex items-center justify-between px-8 py-5 shrink-0">
         <button
           onClick={() => navigate(game.status === 'active' ? `/play/${gameId}` : '/')}
           className="text-white/40 hover:text-white cursor-pointer text-xl"
@@ -61,7 +61,7 @@ export default function ScoreboardPage() {
       </div>
 
       {/* Title */}
-      <div className="text-center py-6 shrink-0">
+      <div className="text-center py-8 shrink-0">
         {isComplete && (
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
@@ -118,7 +118,7 @@ export default function ScoreboardPage() {
       )}
 
       {/* Full standings */}
-      <div className="max-w-2xl mx-auto w-full px-6 pb-8">
+      <div className="max-w-2xl mx-auto w-full px-8 pb-10">
         <h3 className="text-white/40 text-sm uppercase tracking-widest mb-4 text-center">Full Standings</h3>
         <div className="space-y-2">
           {sorted.map((team, i) => (

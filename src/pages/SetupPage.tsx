@@ -119,7 +119,7 @@ export default function SetupPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-jeopardy-dark to-[#000a3a] overflow-y-auto">
       {/* Top bar */}
-      <div className="sticky top-0 z-50 bg-jeopardy-dark/90 backdrop-blur-md border-b border-white/10 px-6 py-3">
+      <div className="sticky top-0 z-50 bg-jeopardy-dark/90 backdrop-blur-md border-b border-white/10 px-8 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={() => navigate('/')} className="text-white/50 hover:text-white transition-colors cursor-pointer text-2xl">
@@ -180,7 +180,7 @@ export default function SetupPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6 space-y-8">
+      <div className="max-w-6xl mx-auto px-8 py-8 space-y-10">
         {/* Teams */}
         <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <h2 className="text-lg font-bold mb-4 text-jeopardy-gold">Teams</h2>

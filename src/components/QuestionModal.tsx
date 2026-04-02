@@ -176,7 +176,7 @@ export default function QuestionModal({
         {phase === 'question' && (
           <div className="h-full bg-jeopardy-blue flex flex-col overflow-hidden">
             {/* Top bar */}
-            <div className="flex items-center justify-between px-6 py-3 bg-black/20 shrink-0">
+            <div className="flex items-center justify-between px-8 py-4 bg-black/20 shrink-0">
               <div className="flex items-center gap-4">
                 <span className="text-white/60 font-medium">{categoryName}</span>
                 {!question.isDailyDouble && (
@@ -261,7 +261,7 @@ export default function QuestionModal({
             )}
 
             {/* Controls */}
-            <div className="bg-black/30 px-6 py-3 shrink-0">
+            <div className="bg-black/30 px-8 py-4 shrink-0">
               <div className="flex flex-wrap items-center justify-center gap-3">
                 {!showAnswer && (
                   <>

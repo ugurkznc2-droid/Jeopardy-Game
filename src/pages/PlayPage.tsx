@@ -138,7 +138,7 @@ export default function PlayPage() {
   return (
     <div className="h-screen flex flex-col bg-jeopardy-dark overflow-hidden">
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-black/30 border-b border-white/10 shrink-0">
+      <div className="flex items-center justify-between px-6 py-3 bg-black/30 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setConfirmExit(true)}
@@ -183,7 +183,7 @@ export default function PlayPage() {
       )}
 
       {/* Bottom scoreboard */}
-      <div className="shrink-0 px-4 py-3 bg-black/30 border-t border-white/10">
+      <div className="shrink-0 px-6 py-4 bg-black/30 border-t border-white/10">
         <Scoreboard teams={game.teams} compact />
       </div>
 

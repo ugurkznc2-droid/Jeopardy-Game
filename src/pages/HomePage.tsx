@@ -79,15 +79,15 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-jeopardy-dark to-[#000a3a] p-8 overflow-y-auto flex items-start justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-jeopardy-dark to-[#000a3a] px-8 py-16 overflow-y-auto flex items-start justify-center">
       <motion.div
         className="max-w-4xl w-full"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-6xl font-black text-jeopardy-gold mb-2 tracking-tight" style={{ textShadow: '0 0 30px rgba(255,215,0,0.3)' }}>
+        <div className="text-center mb-14">
+          <h1 className="text-6xl font-black text-jeopardy-gold mb-3 tracking-tight" style={{ textShadow: '0 0 30px rgba(255,215,0,0.3)' }}>
             JEOPARDY!
           </h1>
           <p className="text-white/50 text-lg">Tournament Game Manager</p>
