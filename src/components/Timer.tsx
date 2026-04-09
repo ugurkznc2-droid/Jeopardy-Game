@@ -11,30 +11,32 @@ export default function Timer({ seconds, running, onTick, onExpired }: TimerProp
   const [remaining, setRemaining] = useState(seconds);
   const onExpiredRef = useRef(onExpired);
   const onTickRef = useRef(onTick);
+  const remainingRef = useRef(remaining);
 
   useEffect(() => { onExpiredRef.current = onExpired; }, [onExpired]);
   useEffect(() => { onTickRef.current = onTick; }, [onTick]);
+  useEffect(() => { remainingRef.current = remaining; }, [remaining]);
 
   useEffect(() => {
     setRemaining(seconds);
   }, [seconds]);
 
   useEffect(() => {
-    if (!running || remaining <= 0) return;
+    if (!running || remainingRef.current <= 0) return;
     const interval = setInterval(() => {
-      setRemaining(prev => {
-        const next = prev - 1;
+      const next = remainingRef.current - 1;
+      setRemaining(next);
+      // Call callbacks outside of setState to avoid updating parent during render
+      if (next > 0) {
         onTickRef.current?.(next);
-        if (next <= 0) {
-          clearInterval(interval);
-          onExpiredRef.current?.();
-          return 0;
-        }
-        return next;
-      });
+      } else {
+        clearInterval(interval);
+        onTickRef.current?.(0);
+        onExpiredRef.current?.();
+      }
     }, 1000);
     return () => clearInterval(interval);
-  }, [running, remaining <= 0]);
+  }, [running]);
 
   const pct = (remaining / seconds) * 100;
   const isLow = remaining <= 5;
