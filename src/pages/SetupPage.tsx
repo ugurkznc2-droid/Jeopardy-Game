@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
 import { generateId, getDefaultPointValues } from '../utils/helpers';
@@ -25,17 +25,12 @@ export default function SetupPage() {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [showCSVImport, setShowCSVImport] = useState(false);
 
+  useEffect(() => {
+    if (!game || !gameId) navigate('/', { replace: true });
+  }, [game, gameId, navigate]);
+
   if (!game || !gameId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-jeopardy-dark">
-        <div className="text-center">
-          <p className="text-white/50 text-xl mb-4">Game not found</p>
-          <button onClick={() => navigate('/')} className="px-4 py-2 bg-jeopardy-gold text-black rounded-lg font-bold cursor-pointer">
-            Back to Home
-          </button>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const currentRound = game.rounds[activeRound];

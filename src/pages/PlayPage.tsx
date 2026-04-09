@@ -22,15 +22,12 @@ export default function PlayPage() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [roundComplete, setRoundComplete] = useState(false);
 
+  useEffect(() => {
+    if (!game || !gameId) navigate('/', { replace: true });
+  }, [game, gameId, navigate]);
+
   if (!game || !gameId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-jeopardy-dark">
-        <p className="text-white/50 text-xl">Game not found</p>
-        <button onClick={() => navigate('/')} className="ml-4 px-4 py-2 bg-jeopardy-gold text-black rounded-lg font-bold cursor-pointer">
-          Home
-        </button>
-      </div>
-    );
+    return null;
   }
 
   const currentRound = game.rounds[game.currentRound];

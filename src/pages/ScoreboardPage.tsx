@@ -8,12 +8,12 @@ export default function ScoreboardPage() {
   const navigate = useNavigate();
   const game = useGameStore(s => s.games.find(g => g.id === gameId));
 
+  useEffect(() => {
+    if (!game || !gameId) navigate('/', { replace: true });
+  }, [game, gameId, navigate]);
+
   if (!game || !gameId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-jeopardy-dark">
-        <p className="text-white/50">Game not found</p>
-      </div>
-    );
+    return null;
   }
 
   const sorted = [...game.teams].sort((a, b) => b.score - a.score);
