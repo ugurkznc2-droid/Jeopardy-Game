@@ -270,6 +270,41 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'jeopardy-game-store',
+      version: 2,
+      // Migrate stale persisted data from older app versions so it doesn't crash
+      migrate: (persistedState: unknown) => {
+        const state = persistedState as { games?: unknown[] } | null;
+        if (!state || !Array.isArray(state.games)) {
+          return { games: [] } as Partial<GameStore>;
+        }
+        // Backfill any missing fields on questions (e.g., choices/correctChoice from older versions)
+        try {
+          const games = state.games.map((g: any) => ({
+            ...g,
+            soundEnabled: g.soundEnabled ?? true,
+            currentRound: g.currentRound ?? 0,
+            timerSeconds: g.timerSeconds ?? 30,
+            teams: Array.isArray(g.teams) ? g.teams : [],
+            rounds: Array.isArray(g.rounds) ? g.rounds.map((r: any) => ({
+              ...r,
+              categories: Array.isArray(r.categories) ? r.categories.map((c: any) => ({
+                ...c,
+                questions: Array.isArray(c.questions) ? c.questions.map((q: any) => ({
+                  ...q,
+                  choices: Array.isArray(q.choices) && q.choices.length === 4 ? q.choices : ['', '', '', ''],
+                  correctChoice: typeof q.correctChoice === 'number' ? q.correctChoice : 0,
+                  answer: q.answer ?? '',
+                  isRevealed: !!q.isRevealed,
+                })) : [],
+              })) : [],
+            })) : [],
+          }));
+          return { games } as Partial<GameStore>;
+        } catch {
+          // If migration fails, start fresh rather than crashing
+          return { games: [] } as Partial<GameStore>;
+        }
+      },
     }
   )
 );
